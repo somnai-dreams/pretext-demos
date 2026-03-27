@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Type a word and it renders as a shape using its own letters. Characters precisely spaced using pretext measurement for proportional font placement within shape boundaries.">
+  <title>Mockup 143 — Calligram Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    html, body {
+      background: #08080e;
+      color: #ddd8d0;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+    }
+    h1 {
+      font: 600 22px/1.3 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font: 400 13px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 28px;
+      text-align: center;
+      max-width: 500px;
+    }
+    .input-area {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+    .word-input {
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.9);
+      font: 500 18px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      outline: none;
+      width: 240px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .word-input:focus {
+      border-color: rgba(91,168,255,0.4);
+      background: rgba(255,255,255,0.06);
+    }
+    .word-input::placeholder {
+      color: rgba(255,255,255,0.2);
+    }
+    .shape-picker {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .shape-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.5);
+      font: 500 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .shape-btn:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
+    .shape-btn.active {
+      background: rgba(91,168,255,0.12);
+      border-color: rgba(91,168,255,0.3);
+      color: rgba(91,168,255,0.85);
+    }
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    label {
+      font: 500 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input[type="range"] {
+      width: 120px;
+      accent-color: #5ba8ff;
+    }
+    .val-display {
+      font: 500 12px/1 "SF Mono", "Fira Code", monospace;
+      color: rgba(100,200,255,0.8);
+      min-width: 30px;
+    }
+    #calligramCanvas {
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.015);
+    }
+    .presets {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .preset-btn {
+      padding: 5px 12px;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: transparent;
+      color: rgba(255,255,255,0.35);
+      font: 400 12px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preset-btn:hover {
+      color: rgba(255,255,255,0.6);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .credit {
+      position: fixed;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font: 400 10px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.15);
+    }
+  </style>
+</head>
+<body>
+  <h1>Calligram Engine</h1>
+  <p class="subtitle">Type a word. It becomes a picture of itself. Characters precisely spaced using proportional font measurement.</p>
+
+  <div class="input-area">
+    <input type="text" class="word-input" id="wordInput" placeholder="Type a word..." value="heart" maxlength="20">
+  </div>
+
+  <div class="presets">
+    <button class="preset-btn" data-word="love" data-shape="heart">love</button>
+    <button class="preset-btn" data-word="moon" data-shape="circle">moon</button>
+    <button class="preset-btn" data-word="star" data-shape="star">star</button>
+    <button class="preset-btn" data-word="wave" data-shape="wave">wave</button>
+    <button class="preset-btn" data-word="spiral" data-shape="spiral">spiral</button>
+    <button class="preset-btn" data-word="hello" data-shape="heart">hello</button>
+    <button class="preset-btn" data-word="code" data-shape="star">code</button>
+    <button class="preset-btn" data-word="dream" data-shape="spiral">dream</button>
+  </div>
+
+  <div class="shape-picker">
+    <button class="shape-btn active" data-shape="heart">Heart</button>
+    <button class="shape-btn" data-shape="circle">Circle</button>
+    <button class="shape-btn" data-shape="star">Star</button>
+    <button class="shape-btn" data-shape="wave">Wave</button>
+    <button class="shape-btn" data-shape="spiral">Spiral</button>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Size</label>
+      <input type="range" id="sizeSlider" min="200" max="600" value="400">
+      <span class="val-display" id="sizeVal">400</span>
+    </div>
+    <div class="control-group">
+      <label>Density</label>
+      <input type="range" id="densitySlider" min="6" max="24" value="14">
+      <span class="val-display" id="densityVal">14px</span>
+    </div>
+  </div>
+
+  <canvas id="calligramCanvas"></canvas>
+
+  <div class="credit">Built with pretext</div>
+
+  <script type="module" src="./demo-143.js"></script>
+</body>
+</html>

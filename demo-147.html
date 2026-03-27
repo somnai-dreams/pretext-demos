@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Investor-grade pretext demo: animated orbs with real-time text reflow at 60fps, zero DOM measurements.">
+  <title>Mockup 147 — The Editorial Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    html, body {
+      background: radial-gradient(ellipse at 50% 40%, #0f0f14 0%, #0a0a0c 100%);
+      color: #e8e4dc; height: 100vh; overflow: hidden;
+    }
+    body { font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif; }
+
+    #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; user-select: none; -webkit-user-select: none; }
+
+    .line { position: absolute; white-space: pre; pointer-events: none; z-index: 1; color: #e8e4dc; }
+
+    .headline-line {
+      position: absolute; white-space: pre; pointer-events: none;
+      font-weight: 700; color: #fff; letter-spacing: -0.5px; z-index: 2;
+    }
+
+    .drop-cap {
+      position: absolute; pointer-events: none; z-index: 2;
+      font-weight: 700; color: #c4a35a;
+    }
+
+    .orb {
+      position: absolute; border-radius: 50%; pointer-events: none; z-index: 10;
+      will-change: transform;
+    }
+    .orb.paused { opacity: 0.45; }
+
+    .pullquote-box {
+      position: absolute; pointer-events: none; z-index: 3;
+      border-left: 3px solid #6b5a3d; padding-left: 14px;
+    }
+    .pullquote-line {
+      position: absolute; white-space: pre; pointer-events: none;
+      font-style: italic; color: #b8a070;
+    }
+
+    .stats-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(6,6,10,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      padding: 10px 24px; display: flex; gap: 32px; align-items: center;
+      font: 400 12px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.35); z-index: 100;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat { display: flex; gap: 6px; align-items: center; }
+    .stat-value { color: rgba(255,255,255,0.7); font-weight: 600; }
+    .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .hint {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      font: 400 13px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.22); z-index: 100;
+      background: rgba(0,0,0,0.45); padding: 8px 18px; border-radius: 999px;
+      pointer-events: none; white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <div class="hint">Drag the orbs &middot; Click to pause &middot; Text reflows at 60fps &middot; Zero DOM reads</div>
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-label">Lines</span><span class="stat-value" id="sLines">0</span></div>
+    <div class="stat"><span class="stat-label">Reflow</span><span class="stat-value" id="sReflow">0ms</span></div>
+    <div class="stat"><span class="stat-label">DOM reads</span><span class="stat-value" id="sDom">0</span></div>
+    <div class="stat"><span class="stat-label">FPS</span><span class="stat-value" id="sFps">60</span></div>
+    <div class="stat"><span class="stat-label">Columns</span><span class="stat-value" id="sCols">0</span></div>
+  </div>
+
+  <script type="module" src="./demo-147.js"></script>
+</body>
+</html>

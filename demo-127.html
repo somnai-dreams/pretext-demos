@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Side-by-side comparison: CSS fit-content vs pretext shrinkwrap. Pretext finds the exact tightest width for multiline text — something CSS literally cannot do.">
+  <title>Mockup 127 — Shrinkwrap Showdown</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    html, body {
+      background: #08080e;
+      color: #ddd8d0;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .header {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+    .header h1 {
+      font: 600 28px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 8px;
+    }
+    .header p {
+      font: 400 15px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.4);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .columns {
+      display: flex;
+      gap: 2px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .col {
+      flex: 1;
+      padding: 20px;
+    }
+    .col-label {
+      font: 600 13px/1 "SF Mono", "Fira Code", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .col-label.css { background: rgba(255,100,100,0.12); color: rgba(255,130,130,0.8); }
+    .col-label.pretext { background: rgba(100,200,255,0.12); color: rgba(100,200,255,0.8); }
+    .callout {
+      font: 400 11px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.03);
+    }
+    .callout code {
+      color: rgba(255,200,100,0.7);
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 10px;
+    }
+    .chat {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .msg {
+      padding: 8px 12px;
+      border-radius: 16px;
+      font: 15px/20px -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      position: relative;
+    }
+    .msg.sent {
+      align-self: flex-end;
+      background: #0b57d0;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.recv {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.9);
+      border-bottom-left-radius: 4px;
+    }
+    .msg .waste {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(255,80,80,0.08),
+        rgba(255,80,80,0.08) 2px,
+        transparent 2px,
+        transparent 6px
+      );
+      border-radius: 0 16px 4px 0;
+      pointer-events: none;
+    }
+    .waste-total {
+      font: 600 13px/1 "SF Mono", "Fira Code", monospace;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 16px;
+    }
+    .waste-total.bad { background: rgba(255,80,80,0.12); color: rgba(255,130,130,0.9); }
+    .waste-total.good { background: rgba(80,200,120,0.12); color: rgba(80,200,120,0.9); }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+    .slider-row label {
+      font: 500 13px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.4);
+      white-space: nowrap;
+    }
+    .slider-row input {
+      flex: 1;
+      accent-color: rgba(100,200,255,0.8);
+    }
+    .slider-row .val {
+      font: 600 13px/1 "SF Mono", "Fira Code", monospace;
+      color: rgba(100,200,255,0.8);
+      width: 50px;
+      text-align: right;
+    }
+    .why {
+      max-width: 720px;
+      margin: 30px auto 40px;
+      padding: 20px 24px;
+      border-radius: 12px;
+      background: rgba(100,200,255,0.04);
+      border: 1px solid rgba(100,200,255,0.08);
+    }
+    .why h2 {
+      font: 600 14px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(100,200,255,0.8);
+      margin-bottom: 8px;
+    }
+    .why p {
+      font: 400 13px/1.6 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.45);
+    }
+    .why strong { color: rgba(255,255,255,0.7); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Shrinkwrap Showdown</h1>
+    <p>CSS <code>width: fit-content</code> uses the widest line's width — leaving ugly dead space when the last line is short. Pretext computes the exact tightest width that still wraps identically.</p>
+  </div>
+
+  <div class="slider-row">
+    <label>Container width:</label>
+    <input type="range" id="slider" min="200" max="450" value="340">
+    <div class="val" id="val">340px</div>
+  </div>
+
+  <div class="columns" id="columns">
+    <div class="col" id="col-css">
+      <div class="col-label css">CSS fit-content</div>
+      <div class="callout">Uses <code>width: fit-content; max-width: 80%</code>. The browser wraps text, then sizes the bubble to the longest line. Shorter lines leave wasted space.</div>
+      <div class="chat" id="chat-css"></div>
+      <div class="waste-total bad" id="waste-css"></div>
+    </div>
+    <div class="col" id="col-pretext">
+      <div class="col-label pretext">Pretext shrinkwrap</div>
+      <div class="callout">Uses <code>walkLineRanges()</code> to binary-search the tightest width that produces the same line count. Zero wasted pixels. Zero DOM measurement.</div>
+      <div class="chat" id="chat-pretext"></div>
+      <div class="waste-total good" id="waste-pretext"></div>
+    </div>
+  </div>
+
+  <div class="why">
+    <h2>Why can't CSS do this?</h2>
+    <p><strong>CSS only knows "fit-content"</strong> — which is the width of the widest line after wrapping. If a paragraph wraps to 3 lines and the last line is short, CSS still sizes the container to the longest line. There's no CSS property to say "find the narrowest width that still produces exactly 3 lines." That requires <strong>measuring the text at multiple widths and comparing line counts</strong> — which is exactly what pretext's <code>walkLineRanges()</code> does, without touching the DOM at all. Pure arithmetic, no reflows, instant results.</p>
+  </div>
+
+  <script type="module" src="./demo-127.js"></script>
+</body>
+</html>
