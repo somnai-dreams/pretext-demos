@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive demonstrations of pretext — a pure-arithmetic text layout engine. Zero DOM reads, instant measurement, proportional font precision.">
   <title>Pretext Demos</title>
   <style>
     * { box-sizing: border-box; margin: 0; }
@@ -16,84 +17,148 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 60px 20px;
+      padding: 80px 24px 60px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 64px;
+      max-width: 560px;
+    }
+    .logo {
+      font: 300 11px/1 "SF Mono", "Fira Code", "Consolas", monospace;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: rgba(196,163,90,0.5);
+      margin-bottom: 20px;
     }
     h1 {
-      font: 600 32px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 8px;
+      font: 600 42px/1.1 Georgia, Palatino, "Times New Roman", serif;
+      color: rgba(255,255,255,0.92);
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
     }
     .subtitle {
-      font: 400 15px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgba(255,255,255,0.35);
-      margin-bottom: 48px;
-      text-align: center;
-      max-width: 600px;
+      font: 400 15px/1.7 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.32);
     }
+
     .demos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      width: 100%;
+      max-width: 780px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .demo {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      width: 100%;
-      max-width: 600px;
-    }
-    a {
-      display: block;
-      padding: 20px 24px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.85);
+      justify-content: center;
+      padding: 32px 28px;
+      background: #08080e;
       text-decoration: none;
-      font: 500 16px/1.3 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.2s;
+      min-height: 140px;
     }
-    a:hover {
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(255,255,255,0.15);
+    .demo:hover {
+      background: rgba(255,255,255,0.025);
     }
-    a .num {
-      font: 600 12px/1 "SF Mono", "Fira Code", monospace;
-      color: rgba(100,200,255,0.6);
-      margin-right: 12px;
+    .demo:active {
+      background: rgba(255,255,255,0.04);
     }
-    a .desc {
-      font: 400 13px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgba(255,255,255,0.35);
-      margin-top: 4px;
-      display: block;
+
+    .demo-name {
+      font: 600 17px/1.3 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 8px;
+    }
+    .demo-desc {
+      font: 400 13px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.30);
+    }
+    .demo-tag {
+      display: inline-block;
+      font: 500 9px/1 "SF Mono", "Fira Code", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 4px 7px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      width: fit-content;
+    }
+    .tag-layout { background: rgba(100,200,255,0.08); color: rgba(100,200,255,0.6); }
+    .tag-art { background: rgba(196,163,90,0.10); color: rgba(196,163,90,0.6); }
+    .tag-interactive { background: rgba(120,200,120,0.08); color: rgba(120,200,120,0.55); }
+
+    .footer {
+      margin-top: 48px;
+      text-align: center;
+    }
+    .footer a {
+      font: 400 13px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: rgba(255,255,255,0.20);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer a:hover {
+      color: rgba(255,255,255,0.4);
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 48px 16px 40px; }
+      h1 { font-size: 32px; }
+      .demos { grid-template-columns: 1fr; }
+      .demo { min-height: 100px; padding: 24px 20px; }
     }
   </style>
 </head>
 <body>
-  <h1>Pretext Demos</h1>
-  <p class="subtitle">Interactive demonstrations of the pretext text layout engine. Zero DOM reads, pure arithmetic text measurement.</p>
+  <div class="header">
+    <div class="logo">pretext</div>
+    <h1>Text, Without the DOM</h1>
+    <p class="subtitle">Interactive experiments built on pretext &mdash; pure-arithmetic text measurement for proportional fonts. Zero layout thrashing, instant results.</p>
+  </div>
 
   <div class="demos">
-    <a href="demo-127.html">
-      <span class="num">#127</span>Shrinkwrap Showdown
-      <span class="desc">CSS fit-content vs pretext shrinkwrap — finding the exact tightest width for multiline text.</span>
+    <a class="demo" href="the-editorial-engine.html">
+      <div class="demo-tag tag-layout">Layout</div>
+      <div class="demo-name">The Editorial Engine</div>
+      <div class="demo-desc">Multi-column editorial layout with draggable orbs and real-time text reflow at 60fps.</div>
     </a>
-    <a href="demo-143.html">
-      <span class="num">#143</span>Calligram Engine
-      <span class="desc">Type a word and it renders as a shape using its own letters, precisely spaced with proportional font measurement.</span>
+    <a class="demo" href="fluid-smoke.html">
+      <div class="demo-tag tag-art">ASCII Art</div>
+      <div class="demo-name">Fluid Smoke</div>
+      <div class="demo-desc">Full-screen fluid simulation rendered as proportional typographic ASCII.</div>
     </a>
-    <a href="demo-144.html">
-      <span class="num">#144</span>Variable Typographic ASCII
-      <span class="desc">Proportional font ASCII art with 3 weights × normal/italic — characters selected by brightness AND width.</span>
+    <a class="demo" href="wireframe-torus.html">
+      <div class="demo-tag tag-art">ASCII Art</div>
+      <div class="demo-name">Wireframe Torus</div>
+      <div class="demo-desc">Rotating 3D wireframe torus rendered through a proportional character grid.</div>
     </a>
-    <a href="demo-147.html">
-      <span class="num">#147</span>The Editorial Engine
-      <span class="desc">Multi-column editorial layout with animated orbs, real-time text reflow at 60fps, zero DOM measurements.</span>
+    <a class="demo" href="variable-typographic-ascii.html">
+      <div class="demo-tag tag-art">ASCII Art</div>
+      <div class="demo-name">Variable Typographic ASCII</div>
+      <div class="demo-desc">Particle system mapped to characters selected by brightness and width across 3 weights.</div>
     </a>
-    <a href="demo-148.html">
-      <span class="num">#148</span>Fluid Smoke
-      <span class="desc">Full-screen fluid simulation rendered as proportional typographic ASCII art.</span>
+    <a class="demo" href="calligram-engine.html">
+      <div class="demo-tag tag-interactive">Interactive</div>
+      <div class="demo-name">Calligram Engine</div>
+      <div class="demo-desc">Type a word and it renders as a shape using its own letters, precisely spaced.</div>
     </a>
-    <a href="demo-149.html">
-      <span class="num">#149</span>Wireframe Torus
-      <span class="desc">Rotating 3D wireframe torus rendered as proportional typographic ASCII art.</span>
+    <a class="demo" href="shrinkwrap-showdown.html">
+      <div class="demo-tag tag-layout">Layout</div>
+      <div class="demo-name">Shrinkwrap Showdown</div>
+      <div class="demo-desc">CSS fit-content vs pretext &mdash; finding the exact tightest width for multiline text.</div>
     </a>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/chenglou/pretext">github.com/chenglou/pretext</a>
   </div>
 </body>
 </html>

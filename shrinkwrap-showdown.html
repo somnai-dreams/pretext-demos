@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Side-by-side comparison: CSS fit-content vs pretext shrinkwrap. Pretext finds the exact tightest width for multiline text — something CSS literally cannot do.">
-  <title>Mockup 127 — Shrinkwrap Showdown</title>
+  <title>Shrinkwrap Showdown — Pretext Demos</title>
   <style>
     * { box-sizing: border-box; margin: 0; }
     html, body {
@@ -190,6 +190,6 @@
     <p><strong>CSS only knows "fit-content"</strong> — which is the width of the widest line after wrapping. If a paragraph wraps to 3 lines and the last line is short, CSS still sizes the container to the longest line. There's no CSS property to say "find the narrowest width that still produces exactly 3 lines." That requires <strong>measuring the text at multiple widths and comparing line counts</strong> — which is exactly what pretext's <code>walkLineRanges()</code> does, without touching the DOM at all. Pure arithmetic, no reflows, instant results.</p>
   </div>
 
-  <script type="module" src="./demo-127.js"></script>
+  <script type="module" src="./shrinkwrap-showdown.js"></script>
 </body>
 </html>

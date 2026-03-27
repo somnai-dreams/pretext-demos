@@ -1,4 +1,4 @@
-// demo-127.ts
+// shrinkwrap-showdown.ts
 import { prepareWithSegments, walkLineRanges } from "./pretext.js";
 var FONT = '15px -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif';
 var LINE_HEIGHT = 20;

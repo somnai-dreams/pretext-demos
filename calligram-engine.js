@@ -1,4 +1,4 @@
-// demo-143.ts
+// calligram-engine.ts
 import { prepareWithSegments, layoutWithLines } from "./pretext.js";
 var canvas = document.getElementById("calligramCanvas");
 var ctx = canvas.getContext("2d");

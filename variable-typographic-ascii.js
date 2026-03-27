@@ -1,4 +1,4 @@
-// demo-144.ts
+// variable-typographic-ascii.ts
 import { prepareWithSegments } from "./pretext.js";
 var COLS = 50;
 var ROWS = 28;

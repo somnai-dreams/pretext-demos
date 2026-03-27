@@ -1,4 +1,4 @@
-// demo-148.ts
+// fluid-smoke.ts
 import { prepareWithSegments } from "./pretext.js";
 var FONT_SIZE = 14;
 var LINE_HEIGHT = 17;
