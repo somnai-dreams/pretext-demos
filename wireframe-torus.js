@@ -89,8 +89,8 @@ var cvs;
 var ctx;
 var U_STEPS = 40;
 var V_STEPS = 20;
-var MAJOR_R = 0.38;
-var MINOR_R = 0.16;
+var MAJOR_R = 0.42;
+var MINOR_R = 0.12;
 var TWO_PI = Math.PI * 2;
 var baseVerts = [];
 for (let i = 0;i < U_STEPS; i++) {
@@ -117,7 +117,7 @@ function drawTorus(t) {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, cw, ch);
   const ay = t * 0.5, ax = t * 0.3 + Math.sin(t * 0.1) * 0.4;
-  const fov = Math.min(cw, ch / aspect) * 0.45;
+  const fov = Math.min(cw, ch / aspect) * 0.9;
   const camDist = 1.2;
   const proj = [];
   for (let i = 0;i < U_STEPS; i++) {
