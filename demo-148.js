@@ -42,6 +42,8 @@ if (maxB > 0)
     p.brightness /= maxB;
 palette.sort((a, b) => a.brightness - b.brightness);
 var avgCharW = palette.reduce((s, p) => s + p.width, 0) / palette.length;
+var aspect = avgCharW / LINE_HEIGHT;
+var aspect2 = aspect * aspect;
 var spaceW = FONT_SIZE * 0.27;
 function findBest(targetB, targetW) {
   let lo = 0, hi = palette.length - 1;
@@ -95,6 +97,7 @@ function getVel(c, r, t) {
   const nx = c / COLS, ny = r / ROWS;
   let vx = Math.sin(ny * 6.28 + t * 0.3) * 2 + Math.cos((nx + ny) * 12.5 + t * 0.55) * 0.7 + Math.sin(nx * 25 + ny * 18 + t * 0.8) * 0.25;
   let vy = Math.cos(nx * 5 + t * 0.4) * 1.5 + Math.sin((nx - ny) * 10 + t * 0.4) * 0.8 + Math.cos(nx * 18 - ny * 25 + t * 0.7) * 0.25;
+  vy *= aspect;
   return [vx, vy];
 }
 function updateSim(t) {
@@ -113,7 +116,7 @@ function updateSim(t) {
   for (let r = 1;r < ROWS - 1; r++) {
     for (let c = 1;c < COLS - 1; c++) {
       const i = r * COLS + c;
-      const avg = (density[i - 1] + density[i + 1] + density[i - COLS] + density[i + COLS]) * 0.25;
+      const avg = (density[i - 1] + density[i + 1] + (density[i - COLS] + density[i + COLS]) * aspect2) / (2 + 2 * aspect2);
       tempDen[i] = density[i] * 0.92 + avg * 0.08;
     }
   }
@@ -127,7 +130,8 @@ function updateSim(t) {
       for (let dc = -spread;dc <= spread; dc++) {
         const rr = er + dr, cc = ec + dc;
         if (rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS) {
-          const dist = Math.sqrt(dr * dr + dc * dc);
+          const drScaled = dr / aspect;
+          const dist = Math.sqrt(drScaled * drScaled + dc * dc);
           const s = Math.max(0, 1 - dist / (spread + 1));
           density[rr * COLS + cc] = Math.min(1, density[rr * COLS + cc] + s * e.strength);
         }

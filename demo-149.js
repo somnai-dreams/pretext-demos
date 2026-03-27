@@ -42,6 +42,7 @@ if (maxB > 0)
     p.brightness /= maxB;
 palette.sort((a, b) => a.brightness - b.brightness);
 var avgCharW = palette.reduce((s, p) => s + p.width, 0) / palette.length;
+var aspect = avgCharW / LINE_HEIGHT;
 var spaceW = FONT_SIZE * 0.27;
 function findBest(targetB, targetW) {
   let lo = 0, hi = palette.length - 1;
@@ -126,7 +127,7 @@ function drawTorus(t) {
       p = rotY(p, ay);
       p = rotX(p, ax);
       const d = p.z + camDist;
-      row.push({ x: cw / 2 + p.x * fov / d, y: ch / 2 + p.y * fov / d, z: p.z });
+      row.push({ x: cw / 2 + p.x * fov / d, y: ch / 2 + p.y * fov / d * aspect, z: p.z });
     }
     proj.push(row);
   }
