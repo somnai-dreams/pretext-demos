@@ -131,35 +131,62 @@ function drawTorus(t) {
     }
     proj.push(row);
   }
-  const layers = [
-    { width: 14, alpha: 0.06 },
-    { width: 8, alpha: 0.12 },
-    { width: 4, alpha: 0.5 }
-  ];
-  for (const layer of layers) {
-    ctx.lineWidth = layer.width;
-    for (let i = 0;i < U_STEPS; i++) {
-      const ni = (i + 1) % U_STEPS;
-      for (let j = 0;j < V_STEPS; j++) {
-        const nj = (j + 1) % V_STEPS;
-        const p = proj[i][j];
-        const ph = proj[ni][j];
-        const depthH = 1 - (p.z + ph.z) * 0.5 * 1.2;
-        const bH = Math.max(0.05, Math.min(1, depthH * 0.7 + 0.3)) * layer.alpha;
-        ctx.strokeStyle = `rgba(255,255,255,${bH.toFixed(3)})`;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(ph.x, ph.y);
-        ctx.stroke();
-        const pv = proj[i][nj];
-        const depthV = 1 - (p.z + pv.z) * 0.5 * 1.2;
-        const bV = Math.max(0.05, Math.min(1, depthV * 0.7 + 0.3)) * layer.alpha;
-        ctx.strokeStyle = `rgba(255,255,255,${bV.toFixed(3)})`;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(pv.x, pv.y);
-        ctx.stroke();
-      }
+  // Filled quads with Lambertian shading
+  const lightDir = { x: 0.3, y: -0.5, z: 0.8 };
+  const lightLen = Math.sqrt(lightDir.x ** 2 + lightDir.y ** 2 + lightDir.z ** 2);
+  lightDir.x /= lightLen; lightDir.y /= lightLen; lightDir.z /= lightLen;
+
+  for (let i = 0; i < U_STEPS; i++) {
+    const ni = (i + 1) % U_STEPS;
+    for (let j = 0; j < V_STEPS; j++) {
+      const nj = (j + 1) % V_STEPS;
+      const p00 = proj[i][j], p10 = proj[ni][j], p01 = proj[i][nj], p11 = proj[ni][nj];
+
+      // Face normal from cross product (in rotated 3D space)
+      const a = baseVerts[i][j], b = baseVerts[ni][j], c = baseVerts[i][nj];
+      let ra = rotY(a, ay); ra = rotX(ra, ax);
+      let rb = rotY(b, ay); rb = rotX(rb, ax);
+      let rc = rotY(c, ay); rc = rotX(rc, ax);
+      const e1 = { x: rb.x - ra.x, y: rb.y - ra.y, z: rb.z - ra.z };
+      const e2 = { x: rc.x - ra.x, y: rc.y - ra.y, z: rc.z - ra.z };
+      const nx = e1.y * e2.z - e1.z * e2.y;
+      const ny = e1.z * e2.x - e1.x * e2.z;
+      const nz = e1.x * e2.y - e1.y * e2.x;
+      const nl = Math.sqrt(nx * nx + ny * ny + nz * nz);
+      if (nl < 0.0001) continue;
+
+      const dot = (nx * lightDir.x + ny * lightDir.y + nz * lightDir.z) / nl;
+      const brightness = Math.max(0, dot) * 0.7 + 0.15;
+      const avgZ = (ra.z + rb.z + rc.z) / 3;
+      const depthFade = Math.max(0.15, Math.min(1, 1 - avgZ * 0.8));
+      const alpha = brightness * depthFade;
+
+      ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.moveTo(p00.x, p00.y);
+      ctx.lineTo(p10.x, p10.y);
+      ctx.lineTo(p11.x, p11.y);
+      ctx.lineTo(p01.x, p01.y);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  // Wireframe edges on top — thin lines for definition
+  ctx.lineWidth = 2;
+  for (let i = 0; i < U_STEPS; i++) {
+    const ni = (i + 1) % U_STEPS;
+    for (let j = 0; j < V_STEPS; j++) {
+      const nj = (j + 1) % V_STEPS;
+      const p = proj[i][j];
+      const depthP = 1 - p.z * 1.2;
+      const lineAlpha = Math.max(0.02, Math.min(0.25, depthP * 0.2 + 0.05));
+      const ph = proj[ni][j];
+      ctx.strokeStyle = `rgba(255,255,255,${lineAlpha.toFixed(3)})`;
+      ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(ph.x, ph.y); ctx.stroke();
+      const pv = proj[i][nj];
+      ctx.strokeStyle = `rgba(255,255,255,${lineAlpha.toFixed(3)})`;
+      ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pv.x, pv.y); ctx.stroke();
     }
   }
 }
