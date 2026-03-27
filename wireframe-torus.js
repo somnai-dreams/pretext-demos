@@ -84,7 +84,7 @@ var statsEl = document.getElementById("stats");
 var COLS = 0;
 var ROWS = 0;
 var rowEls = [];
-var SCALE = 3;
+var SCALE = 8;
 var cvs;
 var ctx;
 var U_STEPS = 40;
@@ -132,9 +132,9 @@ function drawTorus(t) {
     proj.push(row);
   }
   const layers = [
-    { width: 5, alpha: 0.06 },
-    { width: 3, alpha: 0.12 },
-    { width: 1.5, alpha: 0.5 }
+    { width: 14, alpha: 0.06 },
+    { width: 8, alpha: 0.12 },
+    { width: 4, alpha: 0.5 }
   ];
   for (const layer of layers) {
     ctx.lineWidth = layer.width;
