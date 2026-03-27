@@ -117,7 +117,7 @@ function drawTorus(t) {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, cw, ch);
   const ay = t * 0.5, ax = t * 0.3 + Math.sin(t * 0.1) * 0.4;
-  const fov = Math.min(cw, ch) * 1.1;
+  const fov = Math.min(cw, ch / aspect) * 0.45;
   const camDist = 1.2;
   const proj = [];
   for (let i = 0;i < U_STEPS; i++) {
