@@ -5,155 +5,262 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Interactive demonstrations of pretext — a pure-arithmetic text layout engine. Zero DOM reads, instant measurement, proportional font precision.">
   <title>Pretext Demos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; }
+    :root {
+      --bg: #FAFAF7;
+      --ink: #1A1A1A;
+      --orange: #E8590C;
+      --teal: #0D9488;
+      --muted: rgba(100, 90, 75, 0.5);
+      --mono: 'Space Mono', 'Courier New', monospace;
+      --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      background: #08080e;
-      color: #ddd8d0;
+      background: var(--bg);
+      color: var(--ink);
       min-height: 100vh;
     }
     body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: var(--sans);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 80px 24px 60px;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 64px;
-      max-width: 560px;
-    }
-    .logo {
-      font: 300 11px/1 "SF Mono", "Fira Code", "Consolas", monospace;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      color: rgba(196,163,90,0.5);
-      margin-bottom: 20px;
-    }
-    h1 {
-      font: 600 42px/1.1 Georgia, Palatino, "Times New Roman", serif;
-      color: rgba(255,255,255,0.92);
-      margin-bottom: 16px;
-      letter-spacing: -0.5px;
-    }
-    .subtitle {
-      font: 400 15px/1.7 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgba(255,255,255,0.32);
-    }
-
-    .demos {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
+    main {
+      flex: 1;
+      padding: 120px 40px 80px;
+      max-width: 1200px;
       width: 100%;
-      max-width: 780px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px;
-      overflow: hidden;
+      margin: 0 auto;
     }
 
-    .demo {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 32px 28px;
-      background: #08080e;
+    .hero-title {
+      font-size: clamp(6rem, 14vw, 12rem);
+      font-weight: 900;
+      color: var(--orange);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: rgba(100, 90, 75, 0.6);
+      line-height: 1.5;
+      max-width: 500px;
+      margin-top: 24px;
+    }
+
+    .demo-list {
+      list-style: none;
+      margin-top: 48px;
+    }
+
+    .demo-item {
+      border-top: 1px solid #E8E5E0;
+    }
+
+    .demo-item:last-child {
+      border-bottom: 1px solid #E8E5E0;
+    }
+
+    .demo-link {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      padding: 16px 0;
       text-decoration: none;
-      transition: background 0.2s;
-      min-height: 140px;
+      color: inherit;
+      transition: all 0.15s;
+      position: relative;
     }
-    .demo:hover {
-      background: rgba(255,255,255,0.025);
+
+    .demo-link::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      right: -20px;
+      top: 0;
+      bottom: 0;
+      background: transparent;
+      transition: background 0.15s;
+      z-index: -1;
+      border-radius: 2px;
     }
-    .demo:active {
-      background: rgba(255,255,255,0.04);
+
+    .demo-link:hover::before {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .demo-link:hover .demo-name {
+      letter-spacing: 0.01em;
     }
 
     .demo-name {
-      font: 600 17px/1.3 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgba(255,255,255,0.88);
-      margin-bottom: 8px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      transition: letter-spacing 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .demo-desc {
-      font: 400 13px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgba(255,255,255,0.30);
+      font-size: 0.85rem;
+      color: #888;
+      line-height: 1.4;
+      grid-column: 1;
+      padding-top: 2px;
     }
-    .demo-tag {
+
+    .demo-meta {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      align-self: center;
+    }
+
+    .cat-dot {
       display: inline-block;
-      font: 500 9px/1 "SF Mono", "Fira Code", monospace;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .cat-label {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 4px 7px;
-      border-radius: 4px;
-      margin-bottom: 12px;
-      width: fit-content;
+      letter-spacing: 0.08em;
+      color: #999;
     }
-    .tag-layout { background: rgba(100,200,255,0.08); color: rgba(100,200,255,0.6); }
-    .tag-art { background: rgba(196,163,90,0.10); color: rgba(196,163,90,0.6); }
-    .tag-interactive { background: rgba(120,200,120,0.08); color: rgba(120,200,120,0.55); }
 
-    .footer {
-      margin-top: 48px;
-      text-align: center;
+    /* Category hover colors */
+    [data-category="layout"] .demo-link:hover .demo-name {
+      color: var(--orange);
     }
-    .footer a {
-      font: 400 13px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgba(255,255,255,0.20);
+
+    [data-category="art"] .demo-link:hover .demo-name {
+      color: var(--teal);
+    }
+
+    .site-footer {
+      padding: 32px 40px;
+      border-top: 1px solid rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: rgba(100, 90, 75, 0.4);
+      letter-spacing: 0.3px;
+    }
+
+    .site-footer a {
+      color: rgba(80, 70, 55, 0.5);
       text-decoration: none;
-      transition: color 0.15s;
-    }
-    .footer a:hover {
-      color: rgba(255,255,255,0.4);
+      transition: color 0.2s;
     }
 
-    @media (max-width: 600px) {
-      body { padding: 48px 16px 40px; }
-      h1 { font-size: 32px; }
-      .demos { grid-template-columns: 1fr; }
-      .demo { min-height: 100px; padding: 24px 20px; }
+    .site-footer a:hover {
+      color: var(--ink);
+    }
+
+    @media (max-width: 640px) {
+      main {
+        padding: 80px 24px 60px;
+      }
+
+      .demo-link {
+        grid-template-columns: 1fr;
+      }
+
+      .demo-meta {
+        grid-column: 1;
+        grid-row: auto;
+        margin-top: 8px;
+      }
+
+      .demo-name {
+        font-size: 1.1rem;
+      }
+
+      .site-footer {
+        padding: 24px 20px;
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">pretext</div>
-    <h1>Text, Without the DOM</h1>
-    <p class="subtitle">Interactive experiments built on pretext &mdash; pure-arithmetic text measurement for proportional fonts. Zero layout thrashing, instant results.</p>
-  </div>
+  <main>
+    <h1 class="hero-title">Pretext</h1>
+    <p class="hero-subtitle">Interactive experiments built on pretext — pure-arithmetic text measurement for proportional fonts. Zero layout thrashing, instant results.</p>
 
-  <div class="demos">
-    <a class="demo" href="the-editorial-engine.html">
-      <div class="demo-tag tag-layout">Layout</div>
-      <div class="demo-name">The Editorial Engine</div>
-      <div class="demo-desc">Multi-column editorial layout with draggable orbs and real-time text reflow at 60fps.</div>
-    </a>
-    <a class="demo" href="fluid-smoke.html">
-      <div class="demo-tag tag-art">ASCII Art</div>
-      <div class="demo-name">Fluid Smoke</div>
-      <div class="demo-desc">Full-screen fluid simulation rendered as proportional typographic ASCII.</div>
-    </a>
-    <a class="demo" href="justification-comparison.html">
-      <div class="demo-tag tag-layout">Layout</div>
-      <div class="demo-name">Justification Compared</div>
-      <div class="demo-desc">Side-by-side CSS greedy, hyphenated, and Knuth-Plass optimal justification with river detection.</div>
-    </a>
-    <a class="demo" href="variable-typographic-ascii.html">
-      <div class="demo-tag tag-art">ASCII Art</div>
-      <div class="demo-name">Variable Typographic ASCII</div>
-      <div class="demo-desc">Particle system mapped to characters selected by brightness and width across 3 weights.</div>
-    </a>
-    <a class="demo" href="shrinkwrap-showdown.html">
-      <div class="demo-tag tag-layout">Layout</div>
-      <div class="demo-name">Shrinkwrap Showdown</div>
-      <div class="demo-desc">CSS fit-content vs pretext &mdash; finding the exact tightest width for multiline text.</div>
-    </a>
-  </div>
+    <ul class="demo-list">
+      <li class="demo-item" data-category="layout">
+        <a class="demo-link" href="the-editorial-engine.html">
+          <span class="demo-name">The Editorial Engine</span>
+          <span class="demo-meta">
+            <span class="cat-dot" style="background: var(--orange)"></span>
+            <span class="cat-label">Layout</span>
+          </span>
+          <span class="demo-desc">Multi-column editorial layout with draggable orbs and real-time text reflow at 60fps.</span>
+        </a>
+      </li>
+      <li class="demo-item" data-category="art">
+        <a class="demo-link" href="fluid-smoke.html">
+          <span class="demo-name">Fluid Smoke</span>
+          <span class="demo-meta">
+            <span class="cat-dot" style="background: var(--teal)"></span>
+            <span class="cat-label">ASCII Art</span>
+          </span>
+          <span class="demo-desc">Full-screen fluid simulation rendered as proportional typographic ASCII.</span>
+        </a>
+      </li>
+      <li class="demo-item" data-category="layout">
+        <a class="demo-link" href="justification-comparison.html">
+          <span class="demo-name">Justification Compared</span>
+          <span class="demo-meta">
+            <span class="cat-dot" style="background: var(--orange)"></span>
+            <span class="cat-label">Layout</span>
+          </span>
+          <span class="demo-desc">Side-by-side CSS greedy, hyphenated, and Knuth-Plass optimal justification with river detection.</span>
+        </a>
+      </li>
+      <li class="demo-item" data-category="art">
+        <a class="demo-link" href="variable-typographic-ascii.html">
+          <span class="demo-name">Variable Typographic ASCII</span>
+          <span class="demo-meta">
+            <span class="cat-dot" style="background: var(--teal)"></span>
+            <span class="cat-label">ASCII Art</span>
+          </span>
+          <span class="demo-desc">Particle system mapped to characters selected by brightness and width across 3 weights.</span>
+        </a>
+      </li>
+      <li class="demo-item" data-category="layout">
+        <a class="demo-link" href="shrinkwrap-showdown.html">
+          <span class="demo-name">Shrinkwrap Showdown</span>
+          <span class="demo-meta">
+            <span class="cat-dot" style="background: var(--orange)"></span>
+            <span class="cat-label">Layout</span>
+          </span>
+          <span class="demo-desc">CSS fit-content vs pretext — finding the exact tightest width for multiline text.</span>
+        </a>
+      </li>
+    </ul>
+  </main>
 
-  <div class="footer">
+  <footer class="site-footer">
+    <span>pretext demos</span>
     <a href="https://github.com/chenglou/pretext">github.com/chenglou/pretext</a>
-  </div>
+  </footer>
 </body>
 </html>
